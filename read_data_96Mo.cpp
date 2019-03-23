@@ -2,6 +2,8 @@
 // Modified by Cecilie, 23 March 2019
 // Using declarations_plain.h with "neutral" calibration coefficients 
 // to determine peak positions for calibration of SiRi and OSCAR
+// To compile: 
+// > c++ read_data_96Mo.cpp XIA_CFD.cpp `root-config --libs --cflags` -o read_data
 
 //#include "declarations.h"
 #include "declarations_plain.h"
