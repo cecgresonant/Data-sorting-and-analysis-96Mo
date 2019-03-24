@@ -4,6 +4,9 @@
 // to determine peak positions for calibration of SiRi and OSCAR
 // To compile: 
 // > c++ read_data_96Mo.cpp XIA_CFD.cpp `root-config --libs --cflags` -o read_data
+// Make also Delta E multiplicity to see how many strips are firing within the event
+// In declarations_plain.h, updated with MAX_HITS_DEDET so we can keep track of the
+// Delta E multiplicity
 
 //#include "declarations.h"
 #include "declarations_plain.h"
@@ -84,7 +87,7 @@ void ReadFile(std::string filename)
     int64_t n_tot=0, n_events=0, n_pile_up=0, n_cfd_fail=0, temp_ts=0;
     uint16_t n_before=0, n_after=0, n_while=1;
     
-    int labr_ID[MAX_HITS_LABR], labr_ring[MAX_HITS_LABR], deDet_ID=0, tel_ID=0, eDet_mult=0, labr_mult=0;
+    int labr_ID[MAX_HITS_LABR], labr_ring[MAX_HITS_LABR], deDet_ID=0, tel_ID=0, deDet_mult=0, eDet_mult=0, labr_mult=0;
     
     double eDet_time[MAX_HITS_EDET], labr_time[MAX_HITS_LABR], temp_cfd=0, eDet_energy[MAX_HITS_EDET], labr_energy[MAX_HITS_LABR], deDet_energy=0;
     
@@ -101,6 +104,7 @@ void ReadFile(std::string filename)
     tree->Branch("tel_ID", &tel_ID, "tel_ID/I");
     tree->Branch("deDet_energy", &deDet_energy, "deDet_energy/D");
     tree->Branch("deDet_timestamp", &deDet_timestamp, "deDet_timestamp/L");
+    tree->Branch("deDet_mult", &deDet_mult, "deDet_mult/I");
     
     tree->Branch("eDet_mult", &eDet_mult, "eDet_mult/I");
     tree->Branch("eDet_energy", eDet_energy, "eDet_energy[eDet_mult]/D");
@@ -114,6 +118,7 @@ void ReadFile(std::string filename)
     
     while (ReadHit(input, hit)){
         
+        deDet_mult=0;
         eDet_mult=0;
         labr_mult=0;
         
