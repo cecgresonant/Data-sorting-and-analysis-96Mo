@@ -25,14 +25,14 @@
 #include <stdint.h>
 
 enum DetectorType {
-    invalid,    //!< Invalid address - type==0
-    labr,       //!< Is a labr detector - type==1
-    deDet,      //!< Is a Delta-E segment - type==2
-    eDet,       //!< Is a E detector - type==3
-    eGuard,     //!< Is a E guard ring
-    ppac,       //!< Is a PPAC
-    rfchan,     //!< Is a RF channel
-    unused      //!< Is a unused XIA channel
+    invalid,    //!< Invalid address: type==0
+    labr,       //!< Is a labr detector: type==1
+    deDet,      //!< Is a Delta-E segment: type==2
+    eDet,       //!< Is a E detector: type==3
+    eGuard,     //!< Is a E guard ring: type==4
+    ppac,       //!< Is a PPAC: type==5
+    rfchan,     //!< Is a RF channel: type==6
+    unused      //!< Is a unused XIA channel: type==7
 };
 
 enum ADCSamplingFreq {
