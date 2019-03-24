@@ -16,8 +16,9 @@
 #define TOTAL_NUMBER_OF_MODULES 9   //!< Number of modules
 #define TOTAL_NUMBER_OF_ADDRESSES 144   //! Total number of address that needs to be defined
 
-#define MAX_HITS_EDET 8    //!< Maximum number of hits in e detectors per event
-#define MAX_HITS_LABR 64    //!< Maximum number of hits in labr detectors per event
+#define MAX_HITS_EDET 8    //!< Maximum number of hits in E detectors per event
+#define MAX_HITS_DEDET 64    //!< Maximum number of hits in dE detectors per event - added by Cecilie
+#define MAX_HITS_LABR 64    //!< Maximum number of hits in LaBr3 detectors per event
 
 
 
@@ -92,13 +93,13 @@ static DetectorInfo_t pDetector[144] =
     {29, f000MHz, unused, 0, 0},
     {30, f000MHz, unused, 0, 0},
     {31, f000MHz, unused, 0, 0},
-    {32, f500MHz, labr, 1, 9},//ring 1, theta = 37.4 deg
+    {32, f500MHz, labr, 1, 9},//ring 1, theta = 37 deg
     {33, f500MHz, labr, 2, 9},
     {34, f500MHz, labr, 3, 9},
     {35, f500MHz, labr, 4, 9},
     {36, f500MHz, labr, 5, 9},
     {37, f500MHz, labr, 6, 10},//ring 2, theta = 63 deg
-    {38, f500MHz, labr, 7, 11},//ring 3, theta = 79.2 deg
+    {38, f500MHz, labr, 7, 11},//ring 3, theta = 79 deg
     {39, f500MHz, labr, 8, 10},
     {40, f500MHz, labr, 9, 11},
     {41, f500MHz, labr, 10, 10},
@@ -108,8 +109,8 @@ static DetectorInfo_t pDetector[144] =
     {45, f500MHz, labr, 14, 10},
     {46, f500MHz, labr, 15, 11},
     {47, f500MHz, unused, 0, 0},
-    {48, f500MHz, labr, 16, 12},//ring 4, theta = 100.8 deg
-    {49, f500MHz, labr, 17, 13},//ring 5, theta = 116.6 deg
+    {48, f500MHz, labr, 16, 12},//ring 4, theta = 101 deg
+    {49, f500MHz, labr, 17, 13},//ring 5, theta = 117 deg
     {50, f500MHz, labr, 18, 13},
     {51, f500MHz, labr, 19, 13},
     {52, f500MHz, labr, 20, 12},
@@ -119,10 +120,10 @@ static DetectorInfo_t pDetector[144] =
     {56, f500MHz, labr, 24, 12},
     {57, f500MHz, labr, 25, 13},
     {58, f500MHz, labr, 26, 13},
-    {59, f500MHz, labr, 27, 14},//ring 5, theta = 142.6 deg
+    {59, f500MHz, labr, 27, 14},//ring 5, theta = 143 deg
     {60, f500MHz, labr, 28, 14},
     {61, f500MHz, labr, 29, 14},
-    {62, f500MHz, labr, 30, 12}, //it is in the position of det 18, which is not in use
+    {62, f500MHz, labr, 30, 12}, //This one is bad, jumping around in energy
     {63, f500MHz, unused, 0, 0},
     {64, f250MHz, deDet, 1, 1},
     {65, f250MHz, deDet, 2, 1},
