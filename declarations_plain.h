@@ -25,10 +25,10 @@
 #include <stdint.h>
 
 enum DetectorType {
-    invalid,    //!< Invalid address
-    labr,       //!< Is a labr detector
-    deDet,      //!< Is a Delta-E segment
-    eDet,       //!< Is a E detector
+    invalid,    //!< Invalid address - type==0
+    labr,       //!< Is a labr detector - type==1
+    deDet,      //!< Is a Delta-E segment - type==2
+    eDet,       //!< Is a E detector - type==3
     eGuard,     //!< Is a E guard ring
     ppac,       //!< Is a PPAC
     rfchan,     //!< Is a RF channel
