@@ -87,11 +87,11 @@ void ReadFile(std::string filename)
     int64_t n_tot=0, n_events=0, n_pile_up=0, n_cfd_fail=0, temp_ts=0;
     uint16_t n_before=0, n_after=0, n_while=1;
     
-    int tel_ID=0, deDet_mult=0, eDet_mult=0, labr_mult=0;
-    int labr_ID[MAX_HITS_LABR], labr_ring[MAX_HITS_LABR], deDet_ID[MAX_HITS_DEDET];
+    int tel_ID=0, deDet_ID=0, deDet_mult=0, eDet_mult=0, labr_mult=0; 
+    int labr_ID[MAX_HITS_LABR], labr_ring[MAX_HITS_LABR], deDet_ID_list[MAX_HITS_DEDET];
     
     double eDet_time[MAX_HITS_EDET], labr_time[MAX_HITS_LABR], temp_cfd=0, eDet_energy[MAX_HITS_EDET], labr_energy[MAX_HITS_LABR]; 
-    double deDet_energy[MAX_HITS_DEDET], deDet_time[MAX_HITS_DEDET];
+    double deDet_energy[MAX_HITS_DEDET];
     
     Long64_t deDet_timestamp=0;
     
@@ -103,11 +103,11 @@ void ReadFile(std::string filename)
     TTree *tree = new TTree("data","data");
     
     tree->Branch("deDet_ID", &deDet_ID, "deDet_ID/I");
+    tree->Branch("deDet_ID_list", deDet_ID_list, "deDet_ID_list/I");
     tree->Branch("tel_ID", &tel_ID, "tel_ID/I");
     tree->Branch("deDet_timestamp", &deDet_timestamp, "deDet_timestamp/L");
     tree->Branch("deDet_mult", &deDet_mult, "deDet_mult/I");
     tree->Branch("deDet_energy", deDet_energy, "deDet_energy[deDet_mult]/D");
-    tree->Branch("deDet_time", deDet_time, "deDet_time[deDet_mult]/D");
     
     tree->Branch("eDet_mult", &eDet_mult, "eDet_mult/I");
     tree->Branch("eDet_energy", eDet_energy, "eDet_energy[eDet_mult]/D");
@@ -140,14 +140,15 @@ void ReadFile(std::string filename)
         // Initialize Delta E detectors' vectors
         for (int i=0; i<MAX_HITS_DEDET; ++i) {
             deDet_energy[i]=0;
-            deDet_time[i]=0;
         }        
 
         
         if (!hit.finishcode) {
             
-            if (pDetector[hit.address].type==2) {
+            //if (pDetector[hit.address].type==2) {// Look for a Delta E detector
                 //hit_deDet = hit;
+            // Look for an E detector, then check within 2 us all E, Delta E, LaBr3
+            if (pDetector[hit.address].type==3){ 
                 
                 while (std::ftell(input)) {
                     
@@ -158,12 +159,16 @@ void ReadFile(std::string filename)
                     
                     if (hit.timestamp - hit_before.timestamp < 1000) {
                         if (!hit_before.finishcode) {
-                            if (pDetector[hit_before.address].type==3 && pDetector[hit_before.address].telNum==pDetector[hit.address].telNum) {
+                            // E detectors
+                            if (pDetector[hit_before.address].type==3 && pDetector[hit_before.address].telNum==pDetector[hit.address].telNum) {// ACL: Not sure if I get the last requirement...
                                 hit_eDet[eDet_mult]=hit_before;
                                 eDet_mult++;
-                            } else if (pDetector[hit_before.address].type==1) {
+                            } else if (pDetector[hit_before.address].type==1) { // LaBr3 detectors
                                 hit_labr[labr_mult]=hit_before;
                                 labr_mult++;
+                            } else if (pDetector[hit_before.address].type==2) { // Delta E detectors - added by ACL
+                                hit_deDet[deDet_mult]=hit_before;
+                                deDet_mult++;
                             }
                         }
                     } else {
@@ -183,12 +188,16 @@ void ReadFile(std::string filename)
                     if (ReadHit(input, hit_after)) {
                         if (hit_after.timestamp - hit.timestamp < 1000) {
                             if (!hit_after.finishcode) {
+                                // E detectors
                                 if (pDetector[hit_after.address].type==3 && pDetector[hit_after.address].telNum==pDetector[hit.address].telNum) {
                                     hit_eDet[eDet_mult]=hit_after;
                                     eDet_mult++;
-                                } else if (pDetector[hit_after.address].type==1) {
+                                } else if (pDetector[hit_after.address].type==1) { // LaBr3 detectors
                                     hit_labr[labr_mult]=hit_after;
                                     labr_mult++;
+                                } else if (pDetector[hit_after.address].type==2) { // Delta E detectors
+                                    hit_deDet[deDet_mult]=hit_after;
+                                    deDet_mult++;
                                 }
                             }
                             
@@ -206,11 +215,15 @@ void ReadFile(std::string filename)
                 
                 if (eDet_mult>0) {
                     n_events++;
-                    deDet_ID=pDetector[hit_deDet.address].detectorNum;
                     tel_ID=pDetector[hit_deDet.address].telNum;
-                    deDet_energy=hit_deDet.adcdata+(gRandom->Uniform())-0.5;
-                    deDet_energy=deDetCal[deDet_ID-1][0]+deDetCal[deDet_ID-1][1]*deDet_energy;
-                    deDet_timestamp=hit_deDet.timestamp;
+                    deDet_ID=pDetector[hit_deDet.address].detectorNum; // For the E detector calibration - might be a mismatch here!
+
+                    for (int i=0; i<deDet_mult ; ++i) {
+                        deDet_ID_list[i]=pDetector[hit_deDet[i].address].detectorNum;
+                        deDet_energy[i]=hit_deDet[i].adcdata+(gRandom->Uniform())-0.5;
+                        deDet_energy[i]=deDetCal[deDet_ID[i]-1][0]+deDetCal[deDet_ID[i]-1][1]*deDet_energy[i];
+                        deDet_timestamp=hit_deDet[i].timestamp;
+                    }
                     for (int i=0; i<eDet_mult ; ++i) {
                         eDet_energy[i]=hit_eDet[i].adcdata+(gRandom->Uniform())-0.5;
                         eDet_energy[i]=eDetCal[deDet_ID-1][0]+eDetCal[deDet_ID-1][1]*eDet_energy[i];
