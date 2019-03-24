@@ -17,7 +17,7 @@
 #define TOTAL_NUMBER_OF_ADDRESSES 144   //! Total number of address that needs to be defined
 
 #define MAX_HITS_EDET 8    //!< Maximum number of hits in E detectors per event
-#define MAX_HITS_DEDET 64    //!< Maximum number of hits in dE detectors per event - added by Cecilie
+#define MAX_HITS_DEDET 128    //!< Maximum number of hits in dE detectors per event - added by Cecilie
 #define MAX_HITS_LABR 64    //!< Maximum number of hits in LaBr3 detectors per event
 
 
