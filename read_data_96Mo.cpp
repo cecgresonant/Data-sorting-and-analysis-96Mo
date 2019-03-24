@@ -81,15 +81,17 @@ void ReadFile(std::string filename)
 {
     FILE *input = fopen(filename.c_str(), "rb");
 
-    word_t hit, hit_before, hit_after, hit_deDet;
-    word_t hit_eDet[MAX_HITS_EDET], hit_labr[MAX_HITS_LABR];
+    word_t hit, hit_before, hit_after;//, hit_deDet; // Make hit_deDet into a vector like the hit_eDet
+    word_t hit_deDet[MAX_HITS_DEDET], hit_eDet[MAX_HITS_EDET], hit_labr[MAX_HITS_LABR];
     
     int64_t n_tot=0, n_events=0, n_pile_up=0, n_cfd_fail=0, temp_ts=0;
     uint16_t n_before=0, n_after=0, n_while=1;
     
-    int labr_ID[MAX_HITS_LABR], labr_ring[MAX_HITS_LABR], deDet_ID=0, tel_ID=0, deDet_mult=0, eDet_mult=0, labr_mult=0;
+    int tel_ID=0, deDet_mult=0, eDet_mult=0, labr_mult=0;
+    int labr_ID[MAX_HITS_LABR], labr_ring[MAX_HITS_LABR], deDet_ID[MAX_HITS_DEDET];
     
-    double eDet_time[MAX_HITS_EDET], labr_time[MAX_HITS_LABR], temp_cfd=0, eDet_energy[MAX_HITS_EDET], labr_energy[MAX_HITS_LABR], deDet_energy=0;
+    double eDet_time[MAX_HITS_EDET], labr_time[MAX_HITS_LABR], temp_cfd=0, eDet_energy[MAX_HITS_EDET], labr_energy[MAX_HITS_LABR]; 
+    double deDet_energy[MAX_HITS_DEDET], deDet_time[MAX_HITS_DEDET];
     
     Long64_t deDet_timestamp=0;
     
@@ -102,9 +104,10 @@ void ReadFile(std::string filename)
     
     tree->Branch("deDet_ID", &deDet_ID, "deDet_ID/I");
     tree->Branch("tel_ID", &tel_ID, "tel_ID/I");
-    tree->Branch("deDet_energy", &deDet_energy, "deDet_energy/D");
     tree->Branch("deDet_timestamp", &deDet_timestamp, "deDet_timestamp/L");
     tree->Branch("deDet_mult", &deDet_mult, "deDet_mult/I");
+    tree->Branch("deDet_energy", deDet_energy, "deDet_energy[deDet_mult]/D");
+    tree->Branch("deDet_time", deDet_time, "deDet_time[deDet_mult]/D");
     
     tree->Branch("eDet_mult", &eDet_mult, "eDet_mult/I");
     tree->Branch("eDet_energy", eDet_energy, "eDet_energy[eDet_mult]/D");
@@ -122,22 +125,29 @@ void ReadFile(std::string filename)
         eDet_mult=0;
         labr_mult=0;
         
-        for (int i=0; i<MAX_HITS_EDET ; ++i) {
+        // Initialize E detectors' vectors
+        for (int i=0; i<MAX_HITS_EDET; ++i) {
             eDet_energy[i]=0;
             eDet_time[i]=0;
         }
-        
-        for (int i=0; i<MAX_HITS_LABR ; ++i) {
+        // Initialize LaBr3 detectors' vectors
+        for (int i=0; i<MAX_HITS_LABR; ++i) {
             labr_ID[i]=0;
             labr_ring[i]=0;
             labr_energy[i]=0;
             labr_time[i]=0;
         }
+        // Initialize Delta E detectors' vectors
+        for (int i=0; i<MAX_HITS_DEDET; ++i) {
+            deDet_energy[i]=0;
+            deDet_time[i]=0;
+        }        
+
         
         if (!hit.finishcode) {
             
             if (pDetector[hit.address].type==2) {
-                hit_deDet = hit;
+                //hit_deDet = hit;
                 
                 while (std::ftell(input)) {
                     
