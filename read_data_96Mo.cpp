@@ -4,9 +4,6 @@
 // to determine peak positions for calibration of SiRi and OSCAR
 // To compile: 
 // > c++ read_data_96Mo.cpp XIA_CFD.cpp `root-config --libs --cflags` -o read_data
-// Make also Delta E multiplicity to see how many strips are firing within the event
-// In declarations_plain.h, updated with MAX_HITS_DEDET so we can keep track of the
-// Delta E multiplicity
 
 //#include "declarations.h"
 #include "declarations_plain.h"
@@ -81,17 +78,18 @@ void ReadFile(std::string filename)
 {
     FILE *input = fopen(filename.c_str(), "rb");
 
-    word_t hit, hit_before, hit_after;//, hit_deDet; // Make hit_deDet into a vector like the hit_eDet
-    word_t hit_deDet[MAX_HITS_DEDET], hit_eDet[MAX_HITS_EDET], hit_labr[MAX_HITS_LABR];
+    word_t hit, hit_before, hit_after, hit_deDet; 
+    word_t hit_eDet[MAX_HITS_EDET], hit_labr[MAX_HITS_LABR];
     
     int64_t n_tot=0, n_events=0, n_pile_up=0, n_cfd_fail=0, temp_ts=0;
     uint16_t n_before=0, n_after=0, n_while=1;
     
-    int tel_ID=0, deDet_ID=0, deDet_mult=0, eDet_mult=0, labr_mult=0; 
-    int labr_ID[MAX_HITS_LABR], labr_ring[MAX_HITS_LABR], deDet_ID_list[MAX_HITS_DEDET];
+    int tel_ID=0, deDet_ID=0, eDet_mult=0, labr_mult=0; 
+    int labr_ID[MAX_HITS_LABR], labr_ring[MAX_HITS_LABR];
+    int how_many_events_read = 0;
     
-    double eDet_time[MAX_HITS_EDET], labr_time[MAX_HITS_LABR], temp_cfd=0, eDet_energy[MAX_HITS_EDET], labr_energy[MAX_HITS_LABR]; 
-    double deDet_energy[MAX_HITS_DEDET];
+    double deDet_energy=0., eDet_time[MAX_HITS_EDET], labr_time[MAX_HITS_LABR]; 
+    double temp_cfd=0., eDet_energy[MAX_HITS_EDET], labr_energy[MAX_HITS_LABR]; 
     
     Long64_t deDet_timestamp=0;
     
@@ -103,11 +101,9 @@ void ReadFile(std::string filename)
     TTree *tree = new TTree("data","data");
     
     tree->Branch("deDet_ID", &deDet_ID, "deDet_ID/I");
-    tree->Branch("deDet_ID_list", deDet_ID_list, "deDet_ID_list/I");
     tree->Branch("tel_ID", &tel_ID, "tel_ID/I");
     tree->Branch("deDet_timestamp", &deDet_timestamp, "deDet_timestamp/L");
-    tree->Branch("deDet_mult", &deDet_mult, "deDet_mult/I");
-    tree->Branch("deDet_energy", deDet_energy, "deDet_energy[deDet_mult]/D");
+    tree->Branch("deDet_energy", &deDet_energy, "deDet_energy/D");
     
     tree->Branch("eDet_mult", &eDet_mult, "eDet_mult/I");
     tree->Branch("eDet_energy", eDet_energy, "eDet_energy[eDet_mult]/D");
@@ -121,7 +117,6 @@ void ReadFile(std::string filename)
     
     while (ReadHit(input, hit)){
         
-        deDet_mult=0;
         eDet_mult=0;
         labr_mult=0;
         
@@ -136,20 +131,12 @@ void ReadFile(std::string filename)
             labr_ring[i]=0;
             labr_energy[i]=0;
             labr_time[i]=0;
-        }
-        // Initialize Delta E detectors' vectors
-        for (int i=0; i<MAX_HITS_DEDET; ++i) {
-            deDet_energy[i]=0;
         }        
-
-        
         if (!hit.finishcode) {
             
-            //if (pDetector[hit.address].type==2) {// Look for a Delta E detector
-                //hit_deDet = hit;
-            // Look for an E detector, then check within 2 us all E, Delta E, LaBr3
-            if (pDetector[hit.address].type==3){ 
-                
+            if (pDetector[hit.address].type==2) {// Look for a Delta E detector
+                hit_deDet = hit;
+
                 while (std::ftell(input)) {
                     
                     std::fseek(input, sizeof(uint32_t)*(-4), SEEK_CUR);
@@ -166,9 +153,6 @@ void ReadFile(std::string filename)
                             } else if (pDetector[hit_before.address].type==1) { // LaBr3 detectors
                                 hit_labr[labr_mult]=hit_before;
                                 labr_mult++;
-                            } else if (pDetector[hit_before.address].type==2) { // Delta E detectors - added by ACL
-                                hit_deDet[deDet_mult]=hit_before;
-                                deDet_mult++;
                             }
                         }
                     } else {
@@ -176,12 +160,12 @@ void ReadFile(std::string filename)
                     }
                     
                 }
+
                 
                 std::fseek(input, sizeof(uint32_t)*(4*n_before), SEEK_CUR);
                 n_before=0;
                 
-                while (n_while) {
-                    
+                while (n_while) {    
                     std::fseek(input, sizeof(uint32_t)*(4), SEEK_CUR);
                     n_after++;
                     
@@ -195,9 +179,6 @@ void ReadFile(std::string filename)
                                 } else if (pDetector[hit_after.address].type==1) { // LaBr3 detectors
                                     hit_labr[labr_mult]=hit_after;
                                     labr_mult++;
-                                } else if (pDetector[hit_after.address].type==2) { // Delta E detectors
-                                    hit_deDet[deDet_mult]=hit_after;
-                                    deDet_mult++;
                                 }
                             }
                             
@@ -212,19 +193,16 @@ void ReadFile(std::string filename)
                 
                 std::fseek(input, sizeof(uint32_t)*(-4*n_after), SEEK_CUR);
                 n_after=0;
-                
+
                 if (eDet_mult>0) {
                     n_events++;
+                    deDet_ID=pDetector[hit_deDet.address].detectorNum; 
                     tel_ID=pDetector[hit_deDet.address].telNum;
-                    deDet_ID=pDetector[hit_deDet.address].detectorNum; // For the E detector calibration - might be a mismatch here!
+                    deDet_energy=hit_deDet.adcdata+(gRandom->Uniform())-0.5;
+                    deDet_energy=deDetCal[deDet_ID-1][0]+deDetCal[deDet_ID-1][1]*deDet_energy;
+                    deDet_timestamp=hit_deDet.timestamp;
 
-                    for (int i=0; i<deDet_mult ; ++i) {
-                        deDet_ID_list[i]=pDetector[hit_deDet[i].address].detectorNum;
-                        deDet_energy[i]=hit_deDet[i].adcdata+(gRandom->Uniform())-0.5;
-                        deDet_energy[i]=deDetCal[deDet_ID[i]-1][0]+deDetCal[deDet_ID[i]-1][1]*deDet_energy[i];
-                        deDet_timestamp=hit_deDet[i].timestamp;
-                    }
-                    for (int i=0; i<eDet_mult ; ++i) {
+                    for (int i=0; i<eDet_mult; ++i) {
                         eDet_energy[i]=hit_eDet[i].adcdata+(gRandom->Uniform())-0.5;
                         eDet_energy[i]=eDetCal[deDet_ID-1][0]+eDetCal[deDet_ID-1][1]*eDet_energy[i];
                         temp_ts=hit_eDet[i].timestamp-hit_deDet.timestamp;
@@ -232,7 +210,7 @@ void ReadFile(std::string filename)
                         eDet_time[i]=temp_ts+temp_cfd+eDetTimeShift[deDet_ID-1];
                         eDet_time[i]=eDet_time[i]+eDetTimeShiftRecal[deDet_ID-1];
                     }
-                    for (int i=0; i<labr_mult ; ++i) {
+                    for (int i=0; i<labr_mult; ++i) {
                         labr_ID[i]=pDetector[hit_labr[i].address].detectorNum;
                         labr_ring[i]=pDetector[hit_labr[i].address].telNum-8;
                         labr_energy[i]=hit_labr[i].adcdata+(gRandom->Uniform())-0.5;
