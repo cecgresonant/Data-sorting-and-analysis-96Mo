@@ -59,7 +59,8 @@ using namespace std;
 
 static const bool debug  = 0;
 //static const int nmax_proj = 5;
-static const int nmax_proj = 20;    // more channels
+static const int nmax_proj = 10;
+//static const int nmax_proj = 20;    // more channels
 static const int nmax_2d   = 2*nmax_proj;
 
 class Peaks2D : public TNamed {
