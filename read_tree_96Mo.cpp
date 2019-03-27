@@ -129,7 +129,7 @@ void read_tree_96Mo(){
         for(int f=0; f<8; ++f ) {
         	ostringstream histogramNameStream;
             histogramNameStream << "m_e_de_b" << b << "f" << f;
-        	deltaE_E_matrices[histo_no] = new TH2D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),1000,0,max_e,1000,0,max_de);
+        	deltaE_E_matrices[histo_no] = new TH2D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),1000,0,max_e,250,0,max_de);
         	deltaE_E_matrices[histo_no]->GetXaxis()->SetTitle("E_{back} (keV)");
         	deltaE_E_matrices[histo_no]->GetYaxis()->SetTitle("#Delta E_{front} (keV)");
         	++histo_no;
@@ -250,7 +250,7 @@ void read_tree_96Mo(){
     //h_Ex_gamma_bg->Write("h_Ex_gamma_bg",TObject::kOverwrite);
     //h_Ex_gamma->Write("h_Ex_gamma",TObject::kOverwrite);
     outputFile->Close();
-    std::cout << "Histograms written to file  " << nrow << endl;
+    std::cout << "Histograms written to file. " << endl;
 
     
 }
