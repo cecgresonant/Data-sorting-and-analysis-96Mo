@@ -1,8 +1,11 @@
 
 // peak finding macro for the calibration of CACTUS and SiRi with 12C
 // data; written by Alexander Bürger on 2010-01-22
-// Modified to be used for the 186W(a,t)188Re g.s. and the 9/2+ state in 19F from 16O(a,p)19F
-// by Cecilie, 11 March 2019
+// 
+// Modified to be used for the 96Mo(p,p')96Mo ground state 
+// and the 96Mo(p,d)95Mo 5/2+ ground state 
+// (I don't think we see the 5/2+ 1st excited state - which might not even exist)
+// Cecilie, 27 March 2019
 //
 // first, the macro has to be compiled and loaded:
 // .L peaks2D.C++
@@ -55,8 +58,8 @@
 using namespace std;
 
 static const bool debug  = 0;
-static const int nmax_proj = 5;
-//static const int nmax_proj = 20;    // more channels
+//static const int nmax_proj = 5;
+static const int nmax_proj = 20;    // more channels
 static const int nmax_2d   = 2*nmax_proj;
 
 class Peaks2D : public TNamed {
@@ -241,7 +244,8 @@ void Peaks2D::DoNextMatrix()
 void Peaks2D::DrawMatrix()
 {
     if( matrix ) {
-        matrix->Draw();
+        //matrix->Rebin2D(1,2);
+        matrix->Draw("colz");
         if( debug )
             cout << "Peaks2D::DrawMatrix: draw" << endl;
     }
@@ -357,7 +361,7 @@ void Peaks2D::FindPeakProjection(double& peakx, double& peaky)
     peakx = FindPeak1D(p, xf, xl);
     delete p;
 
-    // project on X in the selected X range and find peak
+    // project on Y in the selected X range and find peak
     p = matrix->ProjectionY("__w_eee_ird", xf, xl, "o");
     peaky = FindPeak1D(p, yf, yl);
     delete p;
@@ -509,7 +513,7 @@ void Peaks_EDE::ShowPeak(double px2d, double py2d, double pxp, double pyp)
     DrawPeakCross(px2d,  py2d, pxp, pyp);
 
     //const char* peakname[nPeaks] = {"12C_0M", "12C_4M", "12C_9M" };// three peaks
-    const char* peakname[nPeaks] = {"188Re_0", "19F_6" }; // two peaks, g.s. of 188Re and 6th Ex of 19F
+    const char* peakname[nPeaks] = {"96Mo_0", "95Mo_0" }; // two peaks, g.s. of 96Mo and g.s. of 95Mo
     //const char* peakname[nPeaks] = {"192Os_0gs" }; // one peak
     if( iPeak==0 )
         cout << "\tb(2d)=" << iBack << "\tf(2d)=" << iFront
