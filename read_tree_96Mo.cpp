@@ -122,17 +122,19 @@ void read_tree_96Mo(){
     // TO DO: 
     // 1. Make sure about the mapping of the detector IDs
     // 2. Fill the matrices and write them to the output file
-    TH2D *deltaE_E_matrices[8][8] = {NULL};
+    TH2D *deltaE_E_matrices[64] = {NULL};
 
+    int histo_no=0;
     for(int b=0; b<8; ++b ) {
         for(int f=0; f<8; ++f ) {
-            ostringstream histogramNameStream;
+        	ostringstream histogramNameStream;
             histogramNameStream << "m_e_de_b" << b << "f" << f;
-            deltaE_E_matrices[b][f] = new TH2D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),1000,0,max_e,1000,0,max_de);
-            deltaE_E_matrices[b][f]->GetXaxis()->SetTitle("E_{back} (keV)");
-            deltaE_E_matrices[b][f]->GetYaxis()->SetTitle("#Delta E_{front} (keV)");
-            //cout << histogramNameStream.str().c_str() << endl;
+        	deltaE_E_matrices[histo_no] = new TH2D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),1000,0,max_e,1000,0,max_de);
+        	deltaE_E_matrices[histo_no]->GetXaxis()->SetTitle("E_{back} (keV)");
+        	deltaE_E_matrices[histo_no]->GetYaxis()->SetTitle("#Delta E_{front} (keV)");
+        	++histo_no;
         }
+        //cout << histogramNameStream.str().c_str() << endl;
     }
 
     // ************************************************************************//
@@ -177,16 +179,22 @@ void read_tree_96Mo(){
         
         for (int i=0; i<eDet_mult; ++i) {
             n_eDet++;
+            // Fill E detectors' energies and times
 			h_eDet_energy->Fill(eDet_energy[i],tel_ID-1);
             h_eDet_time->Fill(eDet_time[i],tel_ID-1);
+
             // Fill the "banana" matrices, one for each back and front detector combination
             //std::cout << "E det ID = " << tel_ID << ", Delta E det ID = " << deDet_ID << std::endl;
             const int id_f = (deDet_ID-1) % 8; // from here, the front strip has ID 0..7
-            string bananaName;
-            //TObject *obj = (TObject*)list->At(i);
-             //= deltaE_E_matrices[tel_ID][deDet_ID]->GetName();
-            //deltaE_E_matrices[tel_ID][id_f]->Fill(eDet_energy[i],deDet_energy);
+            const int id_b = (tel_ID-1);
+            char *bananaName = new char[10];
+            sprintf(bananaName,"m_e_de_b%df%d",id_b,id_f);
 
+            TKey *key = gDirectory->FindKey(bananaName);
+            TH2D *h =  (TH2D*)gDirectory->Get(bananaName);
+            h->Fill(eDet_energy[i],deDet_energy);
+
+            // Fill LaBr3 energies and times
             for (int j=0; j<labr_mult ; ++j){
                 h_LaBr3_energy->Fill(labr_energy[j],labr_ID[j]-1);
                 h_LaBr3_time->Fill(labr_time[j],labr_ID[j]-1);
@@ -216,6 +224,9 @@ void read_tree_96Mo(){
     
     
     TFile *outputFile = new TFile("Mo96_plain.root","recreate");
+    //outputFile->Write(); // Write all objects to file - this takes a looong time!!
+
+    // Also possible to only write some objects
     h_eDet_mult->Write("h_eDet_mult",TObject::kOverwrite);
     h_LaBr3_mult->Write("h_LaBr3_mult",TObject::kOverwrite);
     h_deDet_energy->Write("h_deDet_energy",TObject::kOverwrite);
@@ -223,7 +234,11 @@ void read_tree_96Mo(){
     h_eDet_time->Write("h_eDet_time",TObject::kOverwrite);
     h_LaBr3_energy->Write("h_LaBr3_energy",TObject::kOverwrite);
     h_LaBr3_time->Write("h_LaBr3_time",TObject::kOverwrite);
-    //deltaE_E_matrices[tel_ID][deDet_ID]->Write(bananaName,TObject::kOverwrite);
+    // Write all the banana plots (Delta E-E) to file
+    for(int i=0;i<64;++i){
+     	deltaE_E_matrices[i]->Write();
+    }
+
 
     //h_eDet_time->Write("h_eDet1_time_gs_19F_cut");
     //h_labr_energy->Write("h_labr_energy",TObject::kOverwrite);
@@ -235,5 +250,7 @@ void read_tree_96Mo(){
     //h_Ex_gamma_bg->Write("h_Ex_gamma_bg",TObject::kOverwrite);
     //h_Ex_gamma->Write("h_Ex_gamma",TObject::kOverwrite);
     outputFile->Close();
+    std::cout << "Histograms written to file  " << nrow << endl;
+
     
 }
