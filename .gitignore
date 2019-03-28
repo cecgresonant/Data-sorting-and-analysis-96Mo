@@ -3,10 +3,10 @@ QKinz_calc/
 read_data
 sirius*
 Mo96_plain.root
+Mo96_sirical.root
 figures/
 peaks2D_C.d
 peaks2D_C.so
 peaks2D_C_ACLiC_dict_rdict.pcm
 Mo96_siri_peaks.csv
 calibration_96Mo.xlsx
-
