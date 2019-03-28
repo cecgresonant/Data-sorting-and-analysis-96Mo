@@ -222,11 +222,13 @@ void read_tree_96Mo(){
     //if (!(h_Ex_gamma->GetSumw2N() > 0)) h_Ex_gamma->Sumw2(kTRUE);
     //h_Ex_gamma->Add(h_Ex_gamma_bg, -1.0);
     
-    
-    TFile *outputFile = new TFile("Mo96_plain.root","recreate");
-    //outputFile->Write(); // Write all objects to file - this takes a looong time!!
+    // When using declarations_plain.h in read_data_96Mo.cpp:
+    //TFile *outputFile = new TFile("Mo96_plain.root","recreate");
 
-    // Also possible to only write some objects
+    // When using declarations_sirical.h, i.e. SiRi calibration coefficients:
+    TFile *outputFile = new TFile("Mo96_sirical.root","recreate");
+    //outputFile->Write(); // Write all objects to file - this takes a looong time!!
+    // Also possible to only write some objects, this goes faster
     h_eDet_mult->Write("h_eDet_mult",TObject::kOverwrite);
     h_LaBr3_mult->Write("h_LaBr3_mult",TObject::kOverwrite);
     h_deDet_energy->Write("h_deDet_energy",TObject::kOverwrite);
