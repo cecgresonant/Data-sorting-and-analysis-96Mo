@@ -4,9 +4,12 @@
 // to determine peak positions for calibration of SiRi and OSCAR
 // To compile: 
 // > c++ read_data_96Mo.cpp XIA_CFD.cpp `root-config --libs --cflags` -o read_data
+// To run (on one of the 96Mo files): 
+// > ./read_data sirius-20190314-084105.data
 
 //#include "declarations.h"
-#include "declarations_plain.h"
+//#include "declarations_plain.h"
+#include "declarations_sirical.h"
 #include "XIA_CFD.h"
 #include "TFile.h"
 #include "TTree.h"
