@@ -129,8 +129,9 @@ void read_tree_96Mo(){
         for(int f=0; f<8; ++f ) {
         	ostringstream histogramNameStream;
             histogramNameStream << "m_e_de_b" << b << "f" << f;
-        	deltaE_E_matrices[histo_no] = new TH2D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),500,0,max_e,100,0,max_de);
-        	deltaE_E_matrices[histo_no]->GetXaxis()->SetTitle("E_{back} (keV)");
+        	//deltaE_E_matrices[histo_no] = new TH2D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),500,0,max_e,100,0,max_de); // This is best for the peaks2D.C script
+        	deltaE_E_matrices[histo_no] = new TH2D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),1000,0,max_e,500,0,max_de);
+            deltaE_E_matrices[histo_no]->GetXaxis()->SetTitle("E_{back} (keV)");
         	deltaE_E_matrices[histo_no]->GetYaxis()->SetTitle("#Delta E_{front} (keV)");
         	++histo_no;
         }
