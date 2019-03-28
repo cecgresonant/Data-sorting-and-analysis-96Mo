@@ -1,8 +1,10 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf200
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 Helvetica-Bold;\f2\fnil\fcharset0 Monaco;
 \f3\fnil\fcharset0 Tahoma;\f4\fmodern\fcharset0 CourierNewPSMT;}
-{\colortbl;\red255\green255\blue255;\red255\green255\blue255;\red23\green147\blue253;}
-{\*\expandedcolortbl;;\cssrgb\c100000\c100000\c100000;\cssrgb\c6312\c65366\c99611;}
+{\colortbl;\red255\green255\blue255;\red255\green255\blue255;\red23\green147\blue253;\red0\green0\blue0;
+\red0\green128\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c100000\c100000\c100000;\cssrgb\c6312\c65366\c99611;\csgray\c0;
+\csgenericrgb\c0\c50196\c100000;}
 \paperw11900\paperh16840\margl1440\margr1440\vieww16380\viewh11440\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
@@ -122,6 +124,29 @@ Running QKinz to get the theoretical values for the deposited energy in the Delt
 \
 The SiRi values are put into declarations_sirical.h\
 => now sort the data file again \
+Output:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f2 \cf4 \cb5 \CocoaLigature0 anncecil@Ann-Cecilies-MacBook-Air-3:96Mo_p_2019_data> c++ read_data_96Mo.cpp XIA_CFD.cpp `root-config --libs --cflags` -o read_data\
+anncecil@Ann-Cecilies-MacBook-Air-3:96Mo_p_2019_data> ./read_data sirius-20190314-084105.data\
+Results of file 'sirius-20190314-084105.data':\
+Warning in cling::IncrementalParser::CheckABICompatibility():\
+  Possible C++ standard library mismatch, compiled with _LIBCPP_VERSION '5000'\
+  Extraction of runtime standard library version was: '7000'\
+......................................................................................................................................\
+Total number of hits:        134217728\
+Number of correlated events: 20325400\
+Total number of pile-ups:    2032325\
+Total number of cfd fails:   6277619\
+--------------------------------------------------\
+anncecil@Ann-Cecilies-MacBook-Air-3:96Mo_p_2019_data> \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0 \cf0 \cb1 \CocoaLigature1 \
+\
+I need to fix the c++ library mismatch, but that probably requires re-installing CMake => later\'85\
+\
+\
 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 \cf0 \ul \
