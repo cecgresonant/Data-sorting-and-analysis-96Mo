@@ -121,9 +121,6 @@ void read_tree_96Mo(){
     // Cecilie, modification 22 March 2019:
     // Making Delta E - E matrices as in the old user_sort.cpp by Alexander Bürger
     // These can be used for calibration with the script peaks2D.C by Alexander Bürger
-    // TO DO: 
-    // 1. Make sure about the mapping of the detector IDs
-    // 2. Fill the matrices and write them to the output file
     TH2D *deltaE_E_matrices[64] = {NULL};
 
     int histo_no=0;
