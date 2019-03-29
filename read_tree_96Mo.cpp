@@ -5,11 +5,11 @@
 // Info on the experiment: 96Mo(p,p'gamma) with E_p = 16 MeV, I_p = 3.6-3.7 nA
 // SiRi in backward angles, 126-140 degrees
 // OSCAR in the close configuration, 16.3 cm - 17 cm from the target center position
-// One OSCAR detector (no. 30) was not working properly, "jumping" in the energy
+// One OSCAR detector (no. 30) was not working properly, "jumping" in the energy.
 // The target was 96Mo, 1.94 mg/cm^2 and 96.7% enriched.
-// The validation signal for the XiA boxes were the E detectors, 
-// looking 1 us forward and 1 us backward in time, 
-// so in total the time window is 2 us
+// The validation signal for the XiA boxes were the E detectors, the time window is 2 us
+// In the sorting code, we are looking 1 us forward and 1 us backward in time, 
+// so in total the time window is 2 us here also.
 //
 // Data files, 96Mo: 
 // sirius-20190314-084105.data and sirius-20190314-084105-big00X.data
@@ -18,6 +18,8 @@
 // sirius-20190313-142346.data and sirius-20190313-142346-big-00X.data  
 // 
 // Elog: Nd-p-2019
+// CHECK Delta E strips 27-30, and 57, to see if there are some "shadow" 
+// from neighboring strips
 // ************************************************************************//
 
 
