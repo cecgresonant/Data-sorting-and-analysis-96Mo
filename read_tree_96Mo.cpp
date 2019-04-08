@@ -1,6 +1,7 @@
 // ************************************************************************//
 // Frank's nice sorting code :)
 // Modified by Cecilie, March 2019, for the 96Mo data set
+// LAST UPDATE: 8 April 2019
 // 
 // Info on the experiment: 96Mo(p,p'gamma) with E_p = 16 MeV, I_p = 3.6-3.7 nA
 // SiRi in backward angles, 126-140 degrees
@@ -41,6 +42,7 @@ void read_tree_96Mo(){
     char name[1024];
     
     // Set file name, open the file and add it to the TChain t.
+    // 96Mo files
     sprintf(name, "sirius-20190314-084105.root");
     ifstream rootfile1_96Mo(name);
     if (rootfile1_96Mo){
@@ -49,6 +51,7 @@ void read_tree_96Mo(){
     } else {
         std::cout << "File not read" << std::endl;
     }
+
     
     // Variables for detector IDs, timestamps, energies etc
     Int_t deDet_ID=0, tel_ID=0;
@@ -105,7 +108,7 @@ void read_tree_96Mo(){
     
     // Define matrices and histograms
     const int max_e = 20000, max_de = 10000; // Max energies in the E and Delta E detectors
-    const int max_e_labr3 =  20000; // Max energy for the LaBr3 detectors
+    const int max_e_labr3 =  40000; // Max energy for the LaBr3 detectors
     
     TH1D *h_eDet_mult = new TH1D("h_eDet_mult","E_{back} multiplicity",9,0,9);
     TH1D *h_LaBr3_mult = new TH1D("h_LaBr3_mult","LaBr3 multiplicity",60,0,60); // Potentially more hits than 30, because the validation signal gives a 2 us time wndow
