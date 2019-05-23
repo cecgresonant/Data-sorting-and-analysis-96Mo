@@ -1,13 +1,14 @@
 // ************************************************************************//
 // Frank's nice sorting code :)
 // Modified by Cecilie, March 2019, for the 96Mo data set
+// This code is for the 28Si calibration run
 // LAST UPDATE: 8 April 2019
 // 
-// Info on the experiment: 96Mo(p,p'gamma) with E_p = 16 MeV, I_p = 3.6-3.7 nA
+// Info on the experiment: 28Si(p,p'gamma) with E_p = 16 MeV, I_p = 3.6-3.7 nA
 // SiRi in backward angles, 126-140 degrees
 // OSCAR in the close configuration, 16.3 cm - 17 cm from the target center position
 // One OSCAR detector (no. 30) was not working properly, "jumping" in the energy.
-// The target was 96Mo, 1.94 mg/cm^2 and 96.7% enriched.
+// The target was 28Si, thickness is not known but around 2-3 mg/cm^2 and ≈ 92% in 28Si (natural Si).
 // The validation signal for the XiA boxes were the E detectors, the time window is 2 us
 // In the sorting code, we are looking 1 us forward and 1 us backward in time, 
 // so in total the time window is 2 us here also.
@@ -15,6 +16,7 @@
 // Data files, 96Mo: 
 // sirius-20190314-084105.data and sirius-20190314-084105-big00X.data
 // sirius-20190314-145712.data and sirius-20190314-145712-big-000.data
+// 
 // Data files, 28Si (for calibration):
 // sirius-20190313-142346.data and sirius-20190313-142346-big-00X.data  
 // 
@@ -30,7 +32,7 @@
 #define MAX_HITS_EDET 8    //!< Maximum number of hits in e detectors per event
 #define MAX_HITS_LABR 64    //!< Maximum number of hits in labr detectors per event (can be more than 30 due to the long time range for the vaidation signal)
 
-void read_tree_96Mo(){
+void read_tree_28Si(){
     
     Long64_t ns_to_hours = 3600000000000;
     Long64_t ns_to_minutes = 60000000000;
@@ -75,15 +77,15 @@ void read_tree_96Mo(){
     
     // Conversion coefficients to go from deposited energy in SiRi
     // to excitation energy in the residual nucleus
-    Double_t Ex_coeff [8][3] = {//from qkinz for 96Mo(p,p')
-        {15382.792,-0.991240,-9.24e-07},
-        {15383.826,-0.990678,-9.34e-07},
-        {15383.509,-0.989872,-9.55e-07},
-        {15383.491,-0.989155,-9.70e-07},
-        {15382.895,-0.988357,-9.87e-07},
-        {15381.673,-0.987474,-10.1e-07},
-        {15379.764,-0.986502,-10.3e-07},
-        {15377.091,-0.985435,-10.6e-07}
+    Double_t Ex_coeff [8][3] = {//from qkinz for 28Si(p,p') assuming 4 mg/cm2
+        {14533.325,-1.030173,-12.39e-07},
+        {14532.849,-1.027640,-13.02e-07},
+        {14532.560,-1.025162,-13.57e-07},
+        {14529.979,-1.022221,-14.32e-07},
+        {14527.384,-1.019329,-15.00e-07},
+        {14523.407,-1.016213,-15.75e-07},
+        {14517.837,-1.012856,-16.57e-07},
+        {14510.415,-1.009234,-17.48e-07}
     };
     
     // Initializing vectors
@@ -149,6 +151,40 @@ void read_tree_96Mo(){
         //cout << histogramNameStream.str().c_str() << endl;
     }
 
+    // Cecilie, modification 8 April 2019:
+    // Making Delta E + E histograms for all 64 combinations of strips and back detectors
+    // to check alignment.  
+    TH1D *h_e_de_spectra[64] = {NULL};
+    histo_no=0;
+    for(int b=0; b<8; ++b ) {
+        for(int f=0; f<8; ++f ) {
+            ostringstream histogramNameStream;
+            histogramNameStream << "h_e_de_b" << b << "f" << f;
+            h_e_de_spectra[histo_no] = new TH1D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),1000,0,max_e);
+            h_e_de_spectra[histo_no]->GetXaxis()->SetTitle("E_{back}+#Delta E_{front} (keV)");
+            h_e_de_spectra[histo_no]->GetYaxis()->SetTitle("counts");
+            ++histo_no;
+        }
+    }
+
+    // Cecilie, modification 8 April 2019:
+    // Making h_Ex_fX histograms for all 8 rings (126-140 degrees)
+    // to check alignment. Also make the sum of all, h_ex
+    TH1D *h_ex_ring_spectra[8] = {NULL};
+    histo_no=0;
+    for(int f=0; f<8; ++f ) {
+        ostringstream histogramNameStream;
+        histogramNameStream << "h_ex_f" << f;
+        h_ex_ring_spectra[histo_no] = new TH1D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),1000,-1000.,max_e);
+        h_ex_ring_spectra[histo_no]->GetXaxis()->SetTitle("E_{x} (keV)");
+        h_ex_ring_spectra[histo_no]->GetYaxis()->SetTitle("counts");
+        //std::cout << histogramNameStream.str().c_str() << endl;
+        ++histo_no;
+    }
+   
+   
+
+
     // ************************************************************************//
     // Histograms that are not used at present, but will probably be used later:
     //TH2D *h_eDet_energy_time = new TH2D("h_eDet_energy_time","eDet Energy-Time",8192,0,32768,10000,-1000,1000);
@@ -206,6 +242,29 @@ void read_tree_96Mo(){
             TH2D *h =  (TH2D*)gDirectory->Get(bananaName);
             h->Fill(eDet_energy[i],deDet_energy);
 
+            // Fill the E+Delta E histograms
+            char *h_e_de_Name = new char[10];
+            sprintf(h_e_de_Name,"h_e_de_b%df%d",id_b,id_f);
+            TKey *key2 = gDirectory->FindKey(h_e_de_Name);
+            TH1D *h_2 =  (TH1D*)gDirectory->Get(h_e_de_Name);
+            Double_t e_sum = eDet_energy[i]+deDet_energy;
+            h_2->Fill(e_sum);
+
+            // Fill the h_ex_f0...h_ex_f7 histograms, 
+            // this is excitation energy for each angle 126-140 degrees
+            char *h_ex_ring_Name = new char[10];
+            sprintf(h_ex_ring_Name,"h_ex_f%d",id_f);
+            TKey *key3 = gDirectory->FindKey(h_ex_ring_Name);
+            TH1D *h3 =  (TH1D*)gDirectory->Get(h_ex_ring_Name);
+
+
+            Double_t excitation_energy = Ex_coeff[(deDet_ID-tel_ID)%8][0]+(e_sum)*Ex_coeff[(deDet_ID-tel_ID)%8][1]+(e_sum)*(e_sum)*Ex_coeff[(deDet_ID-tel_ID)%8][2];
+            //std::cout << " Ex =  " << excitation_energy << " for histogram " << h_ex_ring_Name << std::endl;
+            if(excitation_energy > -1000. && excitation_energy < 20000.){
+                h3->Fill(excitation_energy);
+            }
+            //std::cout << " DUCK DUCK " << std::endl;
+
             // Fill LaBr3 energies and times
             for (int j=0; j<labr_mult ; ++j){
                 h_LaBr3_energy->Fill(labr_energy[j],labr_ID[j]-1);
@@ -234,11 +293,8 @@ void read_tree_96Mo(){
     //if (!(h_Ex_gamma->GetSumw2N() > 0)) h_Ex_gamma->Sumw2(kTRUE);
     //h_Ex_gamma->Add(h_Ex_gamma_bg, -1.0);
     
-    // When using declarations_plain.h in read_data_96Mo.cpp:
-    //TFile *outputFile = new TFile("Mo96_plain.root","recreate");
-
     // When using declarations_sirical.h, i.e. SiRi calibration coefficients:
-    TFile *outputFile = new TFile("Mo96_sirical.root","recreate");
+    TFile *outputFile = new TFile("Si28_sirical.root","recreate");
     //outputFile->Write(); // Write all objects to file - this takes a looong time!!
     // Also possible to only write some objects, this goes faster
     h_eDet_mult->Write("h_eDet_mult",TObject::kOverwrite);
@@ -249,8 +305,10 @@ void read_tree_96Mo(){
     h_LaBr3_energy->Write("h_LaBr3_energy",TObject::kOverwrite);
     h_LaBr3_time->Write("h_LaBr3_time",TObject::kOverwrite);
     // Write all the banana plots (Delta E-E) to file
+    // and the Delta E + E histograms
     for(int i=0;i<64;++i){
      	deltaE_E_matrices[i]->Write();
+        h_e_de_spectra[i]->Write();
     }
 
 
