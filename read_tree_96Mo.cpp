@@ -302,6 +302,12 @@ void read_tree_96Mo(){
         h_e_de_spectra[i]->Write();
     }
 
+    // Write the ring spectra to file
+    for(int f=0; f<8; ++f ) {
+        h_ex_ring_spectra[f]->Write();
+    }
+
+
 
     //h_eDet_time->Write("h_eDet1_time_gs_19F_cut");
     //h_labr_energy->Write("h_labr_energy",TObject::kOverwrite);
