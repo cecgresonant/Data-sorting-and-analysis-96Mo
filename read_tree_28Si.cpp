@@ -294,9 +294,9 @@ void read_tree_28Si(){
     //h_Ex_gamma->Add(h_Ex_gamma_bg, -1.0);
 
     // When using declarations_plain.h, i.e. default calibration coefficients:
-    TFile *outputFile = new TFile("Si28_plain.root","recreate");
+    //TFile *outputFile = new TFile("Si28_plain.root","recreate");
     // When using declarations_sirical.h, i.e. SiRi calibration coefficients:
-    //TFile *outputFile = new TFile("Si28_sirical.root","recreate");
+    TFile *outputFile = new TFile("Si28_sirical.root","recreate");
     //outputFile->Write(); // Write all objects to file - this takes a looong time!!
     // Also possible to only write some objects, this goes faster
     h_eDet_mult->Write("h_eDet_mult",TObject::kOverwrite);
@@ -311,6 +311,11 @@ void read_tree_28Si(){
     for(int i=0;i<64;++i){
      	deltaE_E_matrices[i]->Write();
         h_e_de_spectra[i]->Write();
+    }
+
+    // Write the ring spectra to file
+    for(int f=0; f<8; ++f ) {
+        h_ex_ring_spectra[f]->Write();
     }
 
 
