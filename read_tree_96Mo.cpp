@@ -140,6 +140,39 @@ void read_tree_96Mo(){
         //cout << histogramNameStream.str().c_str() << endl;
     }
 
+    // Cecilie, modification 8 April 2019:
+    // Making Delta E + E histograms for all 64 combinations of strips and back detectors
+    // to check alignment.  
+    TH1D *h_e_de_spectra[64] = {NULL};
+    histo_no=0;
+    for(int b=0; b<8; ++b ) {
+        for(int f=0; f<8; ++f ) {
+            ostringstream histogramNameStream;
+            histogramNameStream << "h_e_de_b" << b << "f" << f;
+            h_e_de_spectra[histo_no] = new TH1D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),1000,0,max_e);
+            h_e_de_spectra[histo_no]->GetXaxis()->SetTitle("E_{back}+#Delta E_{front} (keV)");
+            h_e_de_spectra[histo_no]->GetYaxis()->SetTitle("counts");
+            ++histo_no;
+        }
+    }
+
+    // Cecilie, modification 8 April 2019:
+    // Making h_Ex_fX histograms for all 8 rings (126-140 degrees)
+    // to check alignment. Also make the sum of all, h_ex
+    TH1D *h_ex_ring_spectra[8] = {NULL};
+    histo_no=0;
+    for(int f=0; f<8; ++f ) {
+        ostringstream histogramNameStream;
+        histogramNameStream << "h_ex_f" << f;
+        h_ex_ring_spectra[histo_no] = new TH1D(histogramNameStream.str().c_str(),histogramNameStream.str().c_str(),1000,-1000.,max_e);
+        h_ex_ring_spectra[histo_no]->GetXaxis()->SetTitle("E_{x} (keV)");
+        h_ex_ring_spectra[histo_no]->GetYaxis()->SetTitle("counts");
+        //std::cout << histogramNameStream.str().c_str() << endl;
+        ++histo_no;
+    }
+   
+
+
     // ************************************************************************//
     // Histograms that are not used at present, but will probably be used later:
     //TH2D *h_eDet_energy_time = new TH2D("h_eDet_energy_time","eDet Energy-Time",8192,0,32768,10000,-1000,1000);
@@ -197,6 +230,28 @@ void read_tree_96Mo(){
             TH2D *h =  (TH2D*)gDirectory->Get(bananaName);
             h->Fill(eDet_energy[i],deDet_energy);
 
+            // Fill the E+Delta E histograms
+            char *h_e_de_Name = new char[10];
+            sprintf(h_e_de_Name,"h_e_de_b%df%d",id_b,id_f);
+            TKey *key2 = gDirectory->FindKey(h_e_de_Name);
+            TH1D *h_2 =  (TH1D*)gDirectory->Get(h_e_de_Name);
+            Double_t e_sum = eDet_energy[i]+deDet_energy;
+            h_2->Fill(e_sum);
+
+            // Fill the h_ex_f0...h_ex_f7 histograms, 
+            // this is excitation energy for each angle 126-140 degrees
+            char *h_ex_ring_Name = new char[10];
+            sprintf(h_ex_ring_Name,"h_ex_f%d",id_f);
+            TKey *key3 = gDirectory->FindKey(h_ex_ring_Name);
+            TH1D *h3 =  (TH1D*)gDirectory->Get(h_ex_ring_Name);
+
+
+            Double_t excitation_energy = Ex_coeff[(deDet_ID-tel_ID)%8][0]+(e_sum)*Ex_coeff[(deDet_ID-tel_ID)%8][1]+(e_sum)*(e_sum)*Ex_coeff[(deDet_ID-tel_ID)%8][2];
+            //std::cout << " Ex =  " << excitation_energy << " for histogram " << h_ex_ring_Name << std::endl;
+            if(excitation_energy > -1000. && excitation_energy < 20000.){
+                h3->Fill(excitation_energy);
+            }
+
             // Fill LaBr3 energies and times
             for (int j=0; j<labr_mult ; ++j){
                 h_LaBr3_energy->Fill(labr_energy[j],labr_ID[j]-1);
@@ -239,9 +294,12 @@ void read_tree_96Mo(){
     h_eDet_time->Write("h_eDet_time",TObject::kOverwrite);
     h_LaBr3_energy->Write("h_LaBr3_energy",TObject::kOverwrite);
     h_LaBr3_time->Write("h_LaBr3_time",TObject::kOverwrite);
+
     // Write all the banana plots (Delta E-E) to file
+    // and the Delta E + E histograms
     for(int i=0;i<64;++i){
      	deltaE_E_matrices[i]->Write();
+        h_e_de_spectra[i]->Write();
     }
 
 
