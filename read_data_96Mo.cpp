@@ -8,8 +8,8 @@
 // > ./read_data sirius-20190314-084105.data
 
 //#include "declarations.h"
-//#include "declarations_plain.h"
-#include "declarations_sirical.h"
+#include "declarations_plain.h"
+//#include "declarations_sirical.h"
 #include "XIA_CFD.h"
 #include "TFile.h"
 #include "TTree.h"
