@@ -7,12 +7,12 @@
 // To run (on one of the 96Mo files): 
 // > ./read_data sirius-20190314-084105.data
 // To run (on one of the 28Si files): 
-// > ./read_data sirius-20190314-084105.data
+// > ./read_data sirius-20190313-142346.data
 
 //#include "declarations.h"
 //#include "declarations_plain.h"
-//#include "declarations_sirical.h"
-#include "declarations_sirical_28Si.h" // For 28Si data, need own calibration
+#include "declarations_sirical.h"	// For 96Mo data
+//#include "declarations_sirical_28Si.h" // For 28Si data, need own calibration
 #include "XIA_CFD.h"
 #include "TFile.h"
 #include "TTree.h"
