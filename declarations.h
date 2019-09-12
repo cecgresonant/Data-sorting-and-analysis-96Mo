@@ -117,7 +117,7 @@ static DetectorInfo_t pDetector[144] =
     {56, f500MHz, labr, 24, 12},
     {57, f500MHz, labr, 25, 13},
     {58, f500MHz, labr, 26, 13},
-    {59, f500MHz, labr, 27, 14},//ring 5, theta = 142.6 deg
+    {59, f500MHz, labr, 27, 14},//ring 6, theta = 142.6 deg
     {60, f500MHz, labr, 28, 14},
     {61, f500MHz, labr, 29, 14},
     {62, f500MHz, labr, 30, 12}, //it is in the position of det 18, which is not in use
