@@ -2,10 +2,10 @@
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 Helvetica-Bold;\f2\fnil\fcharset0 Monaco;
 \f3\fnil\fcharset0 Tahoma;\f4\fmodern\fcharset0 CourierNewPSMT;}
 {\colortbl;\red255\green255\blue255;\red255\green255\blue255;\red23\green147\blue253;\red0\green0\blue0;
-\red0\green128\blue255;}
-{\*\expandedcolortbl;;\cssrgb\c100000\c100000\c100000;\cssrgb\c6312\c65366\c99611;\csgray\c0;
-\csgenericrgb\c0\c50196\c100000;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww16380\viewh11440\viewkind0
+\red0\green0\blue0;\red0\green128\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c100000\c100000\c100000;\cssrgb\c6312\c65366\c99611;\cssrgb\c0\c0\c0;
+\csgray\c0;\csgenericrgb\c0\c50196\c100000;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww16080\viewh10640\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
 \f0\fs28 \cf0 **************************************************************************\
@@ -77,7 +77,7 @@ sirius-20190313-142346-big-002.data\
 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\f0\fs28 \cf0 \kerning1\expnd0\expndtw0 \ul \ulc0 Sorting\ulnone \
+\f0\fs28 \cf0 \kerning1\expnd0\expndtw0 \ul Sorting\ulnone \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
 \fs24 \cf0 \
@@ -124,12 +124,15 @@ Running peaks2D.C to get all the peak positions of the 64 matrices m_e_de_b0f0 -
 \
 Running QKinz to get the theoretical values for the deposited energy in the Delta E and E detectors for each angle. \
 \
+
+\f1\b \ul \ulc4 For 96Mo
+\f0\b0 \ulnone \
 The SiRi values are put into declarations_sirical.h\
 => now sort the data file again \
 Output:\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
-\f2 \cf4 \cb5 \CocoaLigature0 anncecil@Ann-Cecilies-MacBook-Air-3:96Mo_p_2019_data> c++ read_data_96Mo.cpp XIA_CFD.cpp `root-config --libs --cflags` -o read_data\
+\f2 \cf5 \cb6 \CocoaLigature0 anncecil@Ann-Cecilies-MacBook-Air-3:96Mo_p_2019_data> c++ read_data_96Mo.cpp XIA_CFD.cpp `root-config --libs --cflags` -o read_data\
 anncecil@Ann-Cecilies-MacBook-Air-3:96Mo_p_2019_data> ./read_data sirius-20190314-084105.data\
 Results of file 'sirius-20190314-084105.data':\
 Warning in cling::IncrementalParser::CheckABICompatibility():\
@@ -152,4 +155,43 @@ I need to fix the c++ library mismatch, but that probably requires re-installing
 The back detector 2 + front strip 0-2 and 7 seem bad, bad resolution, probably a bad contact somewhere. \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 \cf0 \ul \
+
+\f1\b For 28Si
+\f0\b0 \
+\ulnone From the resolution of the elastic peak, about 275 keV FWHM, it seems like the target thickness is around 9 mg/cm2\
+\
+NOTE: the elastic peak varies quite a bit for the different back detectors but looking at the same strip (angle). This indicates that we are NOT hitting in the center of the target. => should look into the phi dependence later\
+\
+Check of rings: \
+h_e_de_bXf0:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 {{\NeXTGraphic h_ede_f0.png \width18840 \height13120 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+h_e_de_bXf1:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 {{\NeXTGraphic h_ede_f1.png \width18840 \height13120 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 h_e_de_bXf2:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 {{\NeXTGraphic h_ede_f2.png \width18840 \height13120 \appleattachmentpadding0 \appleembedtype0 \appleaqc
+}¬}\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 h_e_de_bXf2:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+BAD DETECTORS:\
+b2f0\
+b2f1\
+b2f2 has somewhat wrong gain\
+\
+\
 }
