@@ -1,3 +1,4 @@
+.DS_Store
 datafiles/
 QKinz_calc/
 read_data
@@ -14,4 +15,9 @@ Mo96_siri_peaks.csv
 Si28_siri_peaks.csv
 calibration_96Mo.xlsx
 ~$calibration_96Mo.xlsx
+calibration_28Si.xlsx
+~$calibration_28Si.xlsx
 data_analysis_96Mo_Feb2019_exp.rtfd/*.png
+th22mama_C.d
+th22mama_C.so
+th22mama_C_ACLiC_dict_rdict.pcm
